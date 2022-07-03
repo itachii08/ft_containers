@@ -14,7 +14,6 @@ class iterator
     private:
         pointer p;
     public:
-
         iterator() : p(NULL)
         {
 
@@ -46,12 +45,12 @@ class iterator
             return p;
         }
 
-        bool operator== (iterator const & lhs)
+        bool operator== (iterator const & lhs) const
         {
             return (this->p == lhs.p);
         }
 
-        bool operator!= (iterator const & lhs)
+        bool operator!= (iterator const & lhs) const
         {
             return (this->p != lhs.p);
         }
@@ -74,14 +73,21 @@ class iterator
 
         iterator &operator++()
         {
-            ++p;
+            p++;
             return *this;
+        }
+
+        iterator operator++(int)
+        {
+            iterator tmp(*this);
+            ++p;
+            return tmp;
         }
 
         iterator operator--(int)
         {
             iterator tmp(*this);
-            --(*this);
+            --p;
             return tmp;
         }
 
@@ -89,13 +95,6 @@ class iterator
         {
             --p;
             return *this;
-        }
-
-        iterator operator++(int)
-        {
-            iterator tmp(*this);
-            ++(*this);
-            return tmp;
         }
 
         iterator operator+(const difference_type & other) const 
@@ -130,15 +129,15 @@ class iterator
 	    	return (p >= other.p);
 	    }
 
-        iterator operator+=(difference_type src)
+        iterator &operator+=(difference_type n)
         {
             p += n;
 		    return (*this);
         }
 
-        iterator operator-=(difference_type src)
+        iterator &operator-=(difference_type n)
         {
-            ptr += n;
+            p -= n;
 		    return (*this);  
         }
 
@@ -154,15 +153,18 @@ class iterator
         template <class _Iter1>
         friend bool operator>=(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y);
         template <class _Iter1>
-        friend bool operator>=(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y);
+        friend bool operator<=(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y);
         template <class _Iter1>
         friend bool operator<(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y);
         template <class _Iter1>
-        friend bool operator==(const ite rator<_Iter1>& __x, const iterator<_Iter1>& __y);
+        friend bool operator==(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y);
+        template <class _Iter>
+        friend typename iterator<T>::difference_type operator- (const iterator<_Iter>& lhs, const iterator<_Iter>& rhs);
+        template <class _Iter>
+        friend iterator <T> operator+ (typename iterator<_Iter>::difference_type n, const iterator<_Iter>& it);
+        
 
 };
-
-
 
 template <class _Iter1>
 bool operator!=(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y) 
@@ -171,14 +173,12 @@ bool operator!=(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y)
 }
 
 template <class _Iter1>
-
 bool operator>(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y) 
 {
     return __y.p > __x.p;
 }
 
 template <class _Iter1>
-
 bool operator<(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y) 
 {
     return __y.p < __x.p;
@@ -195,9 +195,21 @@ bool operator<=(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y)
 {
     return !(__y.p < __x.p);
 }
-template <class _Iter1>
 
+template <class _Iter1>
 bool operator==(const iterator<_Iter1>& __x, const iterator<_Iter1>& __y)
 {
     return __x.p == __y.p;
 }
+
+template <class _Iter>
+iterator <_Iter> operator+ (typename iterator<_Iter>::difference_type n, const iterator<_Iter>& it)
+{
+    return (n + it);   
+}
+
+template <class _Iter>
+typename iterator<_Iter>::difference_type operator- (const iterator<_Iter>& lhs, const iterator<_Iter>& rhs)
+ {
+    return (rhs - lhs);
+ }
