@@ -1,42 +1,25 @@
 #include "vector.hpp"
-
 #include "iterator.hpp"
 
 
 int main()
 {   
-    int a[5] = {5, 4, 6, 7, 8};
-    int b[5];
+        
+		ft::vector<int> first;
+		ft::vector<int> second;
+		ft::vector<int> third;
 
-    int *p = NULL; 
-    p = new int;
-    p[0] = 456;
-    p[1] = 77;
-    p[2] = 747;
-
-    
-
-    iterator<int> v(a);
-    iterator<int> q(a);
-
-    if (v == q)
-        std::cout << "mtsawyin\n";
-    else
-        std::cout << "mamtsawyin\n";
-
-   
-      int k = 5;
-
-    v++;
-    std::cout << *v << "\n";
-    ++v;
-    std::cout << *v << "\n";
+		first.assign (7,100);             // 7 ints with a value of 100
+		ft::vector<int>::iterator it;
+		it=first.begin()+1;
 
 
-    k++;
-    std::cout << k << "\n";
-    ++k;
-    std::cout << k << "\n";
+		int myints[] = {1776,7,4};
+		third.assign (myints,myints+3);   // assigning from array.
+
+		std::cout << "Size of first: " << int (first.size()) << '\n';
+		std::cout << "Size of second: " << int (second.size()) << '\n';
+		std::cout << "Size of third: " << int (third.size()) << '\n';
 
 
 
