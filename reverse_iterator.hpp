@@ -10,15 +10,18 @@ namespace ft
 template <class Iterator>
 class ft::reverse_iterator
 {
- public:
+
+public:
     typedef Iterator iterator_type;
     typedef typename ft::iterator_traits<Iterator>::difference_type   difference_type;
     typedef typename ft::iterator_traits<Iterator>::value_type        value_type;
     typedef typename ft::iterator_traits<Iterator>::pointer           pointer;
     typedef typename ft::iterator_traits<Iterator>::reference         reference;
     typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
-    private:
-		iterator_type ptr;
+private:
+	iterator_type ptr;
+
+public:
 
     reverse_iterator() : ptr() //default	
 	{
@@ -41,7 +44,7 @@ class ft::reverse_iterator
 	    return (ptr);
 	}
 
-    reference operator*() const
+    reference operator*() 
     {
         iterator_type tmp = ptr;
         return (*(--ptr));   
@@ -104,6 +107,16 @@ class ft::reverse_iterator
     {
         return (base()[-n-1]);
     }
+
+    bool operator== (reverse_iterator const & lhs) 
+   {
+       return (this->ptr != lhs.ptr);
+   }
+
+   bool operator!= (reverse_iterator const & lhs) 
+   {
+       return (this->ptr == lhs.ptr);
+   }
 
     friend bool operator== (const ft::reverse_iterator<Iterator>& lhs, const ft::reverse_iterator<Iterator>& rhs);
     friend bool operator!= (const ft::reverse_iterator<Iterator>& lhs, const ft::reverse_iterator<Iterator>& rhs);

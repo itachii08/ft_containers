@@ -39,12 +39,12 @@ class ft::vector
 		         size_type _capacity;
 
             public:
-		         explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(nullptr), _size(0), _capacity(0)
+		         explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(0), _capacity(0)
 		         {
 		         }
                
                explicit vector (size_type n, const value_type& val = value_type(),
-                 const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(nullptr), _size(n), _capacity(n)
+                 const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(n), _capacity(n)
 		         {
 		         	_container = _alloc.allocate(n);
 		         	for (unsigned long i = 0; i < n; i++)
@@ -55,7 +55,7 @@ class ft::vector
 
                template <class InputIterator> 
                vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-               typename enable_if<!is_integral<InputIterator>::value>::type* = nullptr) : _alloc(alloc)
+               typename enable_if<!is_integral<InputIterator>::value>::type* = NULL) : _alloc(alloc)
                {
                   _size = iterlenght(first, last);
 			         _capacity = _size;
@@ -74,11 +74,7 @@ class ft::vector
                  *this = x;
                }
 
-               ~vector()
-		         {
-		         	this->clear();
-		         	_alloc.deallocate(_container, _capacity);
-		         };
+               
 
                vector &operator=(const vector &x)
 		         {
@@ -135,9 +131,24 @@ class ft::vector
 		         {
 		         	return (_alloc.max_size());
 		         }
+				void clear()
+				{
+					size_t i;
+					i = 0;
+					while (i < _size)
+					{
+					
+						_alloc.destroy(&_container[i]);
+						i++;
+					}
+					_size = 0;
+				}
 
-              
-               
+               ~vector()
+		         {
+		         	this->clear();
+		         	_alloc.deallocate(_container, _capacity);
+		         };
                
 
  
