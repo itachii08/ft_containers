@@ -175,5 +175,3 @@ typename ft::reverse_iterator<Iterator>::difference_type operator- (const ft::re
 {
     return (rhs.p + lhs.p);
 }
-
-

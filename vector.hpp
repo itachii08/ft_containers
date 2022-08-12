@@ -26,24 +26,24 @@ class ft::vector
             typedef typename allocator_type::size_type       size_type;
             typedef typename allocator_type::difference_type difference_type;
             typedef typename allocator_type::pointer         pointer;
-            typedef typename allocator_type::const_pointer   const_pointer;
-            typedef Vector_iterator<value_type>             iterator;
-            typedef Vector_iterator<const value_type>      const_iterator;
+            typedef typename alloc ator_type::const_pointer  const_pointer;
+            typedef Vector_iterator<value_type>              iterator;
+            typedef Vector_iterator<const value_type>        const_iterator;
             typedef ft::reverse_iterator<iterator>           reverse_iterator;
             typedef ft::reverse_iterator<const_iterator>     const_reverse_iterator;
 
             private:
 		         allocator_type _alloc;
 		         value_type *_container;
-		         size_type _size;
+		         size_type _size; 
 		         size_type _capacity;
 
             public:
-		         explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(0), _capacity(0)
-		         {
-		         }
+		    	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(0), _capacity(0)
+		    	{
+		    	}
                
-               explicit vector (size_type n, const value_type& val = value_type(),
+            	explicit vector (size_type n, const value_type& val = value_type(),
                  const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(n), _capacity(n)
 		         {
 		         	_container = _alloc.allocate(n);
@@ -57,24 +57,22 @@ class ft::vector
                vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
                typename enable_if<!is_integral<InputIterator>::value>::type* = NULL) : _alloc(alloc)
                {
-                  _size = iterlenght(first, last);
-			         _capacity = _size;
-			         _container = _alloc.allocate(_capacity);
-			         pointer ptr;
-			         ptr = _container;
-			         int i = 0;
-			         for (InputIterator it = first; it != last; it++)
-			         {
-			         	_container[i++] = *it;
-			         }
+                  	_size = iterlenght(first, last);
+			    	_capacity = _size;
+			    	_container = _alloc.allocate(_capacity);
+			    	pointer ptr;
+			    	ptr = _container;
+			    	int i = 0;
+			    	for (InputIterator it = first; it != last; it++)
+			    	{
+			    		_container[i++] = *it;
+			    	}
                }
 
                vector (const vector& x)
                {
                  *this = x;
                }
-
-               
 
                vector &operator=(const vector &x)
 		         {
@@ -89,55 +87,12 @@ class ft::vector
 		         	return (*this);
 		         }
 
-               iterator begin()
-		         {
-		         	return iterator(_container);
-		         }
-
-               const_iterator begin() const
-		         {
-		         	return const_iterator(_container);
-		         }
-
-               iterator end()
-		         {
-		         	return (iterator(&_container[_size]));
-		         }
-		         const_iterator end() const
-		         {
-		         	return (const_iterator(&_container[_size]));
-		         }
-		         reverse_iterator rbegin()
-		         {
-		         	return reverse_iterator(end());
-		         }
-		         const_reverse_iterator rbegin() const
-		         {
-		         	return const_reverse_iterator(end());
-		         }
-		         reverse_iterator rend()
-		         {
-		         	return reverse_iterator(this->begin());
-		         }
-		         const_reverse_iterator rend() const
-		         {
-		         	return const_reverse_iterator(this->begin());
-		         }
-		         size_type size() const
-		         {
-		         	return (_size);
-		         }
-		         size_type max_size() const
-		         {
-		         	return (_alloc.max_size());
-		         }
 				void clear()
 				{
 					size_t i;
 					i = 0;
 					while (i < _size)
 					{
-					
 						_alloc.destroy(&_container[i]);
 						i++;
 					}
@@ -151,7 +106,105 @@ class ft::vector
 		         };
                
 
- 
-            
+				//iterators fonctions//
+
+               iterator begin()
+		        {
+		        	return iterator(_container);
+		        }
+
+               const_iterator begin() const
+		        {
+		        	return const_iterator(_container);
+		        }
+
+               ierator end()
+		       {
+		       	return (iterator(&_container[_size]));
+		       }
+		       const_iterator end() const
+		       {
+		       	return (const_iterator(&_container[_size]));
+		       }
+		       reverse_iterator rbegin()
+		       {
+		       	return reverse_iterator(end());
+		       }
+		       const_reverse_iterator rbegin() const
+		       {
+		       	return const_reverse_iterator(end());
+		       }
+		       reverse_iterator rend()
+		       {
+		       	return reverse_iterator(this->begin());
+		       }
+		       const_reverse_iterator rend() const
+		       {
+		       	return const_reverse_iterator(this->begin());
+		       }
+
+				//Capacity//
+
+		    	size_type size() const
+		    	{
+		    		return (_size);
+		    	}
+		    	size_type max_size() const
+		    	{
+		    		return (_alloc.max_size());
+		    	}
+
+				void reserve( size_type n )
+				{
+					if (n < _capacity)
+						return ;
+					else if (n > max_size())
+						throw std::length_error("error length");
+					pointer t = _c;
+					_c = _alloc.allocate(n);
+					for (size_t i = 0; i < _size; ++i)
+					{
+						_alloc.construct(&_c[i], t[i]);
+						_alloc.destroy(&t[i]);
+					}
+					_alloc.deallocate(t, _capacity);
+					_capacity = n;
+				}
+
+					void resize( size_type n, value_type val = value_type() )
+				{
+					if (n == _size)
+						return ;
+					if (n < _size)
+					{
+						for (size_t i = n; i < _size; ++i)
+							_alloc.destroy(&_container[i]);
+						_size = n;
+						return ;
+					}
+					else if (n > _capacity || n > _size)
+						reserve(n);
+					for (size_t i = _size; i < n; ++i)
+						_alloc.construct(&_container[i], val);
+					_size = n;
+				}
+
+				size_type capacity() const
+				{
+					return _capacity;
+				}
+
+				bool empty() const;
+           		{
+           		    if (_size == 0)
+           		        return true;
+           		    else
+           		        false;
+           		}
+
+				//Element access
+
+
+      
 }; 
 

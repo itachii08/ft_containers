@@ -4,7 +4,7 @@
 
 int main ()
 {
-  ft::vector<int> myvector (5, 50);  // 5 default-constructed ints
+  ft::vector<int> myvector (2, 50);  // 5 default-constructed ints
 
   int i=0;
 
