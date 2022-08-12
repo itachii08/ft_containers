@@ -26,7 +26,7 @@ class ft::vector
             typedef typename allocator_type::size_type       size_type;
             typedef typename allocator_type::difference_type difference_type;
             typedef typename allocator_type::pointer         pointer;
-            typedef typename alloc ator_type::const_pointer  const_pointer;
+            typedef typename allocator_type::const_pointer   const_pointer;
             typedef Vector_iterator<value_type>              iterator;
             typedef Vector_iterator<const value_type>        const_iterator;
             typedef ft::reverse_iterator<iterator>           reverse_iterator;
@@ -118,7 +118,7 @@ class ft::vector
 		        	return const_iterator(_container);
 		        }
 
-               ierator end()
+               iterator end()
 		       {
 		       	return (iterator(&_container[_size]));
 		       }
@@ -160,11 +160,11 @@ class ft::vector
 						return ;
 					else if (n > max_size())
 						throw std::length_error("error length");
-					pointer t = _c;
-					_c = _alloc.allocate(n);
+					pointer t = _container;
+					_container = _alloc.allocate(n);
 					for (size_t i = 0; i < _size; ++i)
 					{
-						_alloc.construct(&_c[i], t[i]);
+						_alloc.construct(&_container[i], t[i]);
 						_alloc.destroy(&t[i]);
 					}
 					_alloc.deallocate(t, _capacity);
@@ -194,12 +194,12 @@ class ft::vector
 					return _capacity;
 				}
 
-				bool empty() const;
+				bool empty() const
            		{
            		    if (_size == 0)
            		        return true;
            		    else
-           		        false;
+           		        return false;
            		}
 
 				//Element access
