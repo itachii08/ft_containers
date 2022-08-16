@@ -37,6 +37,7 @@ class ft::vector
 		         value_type *_container;
 		         size_type _size; 
 		         size_type _capacity;
+				 pointer ptr;
 
             public:
 		    	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(0), _capacity(0)
@@ -57,7 +58,7 @@ class ft::vector
                vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
                typename enable_if<!is_integral<InputIterator>::value>::type* = NULL) : _alloc(alloc)
                {
-                  	_size = iterlenght(first, last);
+                  	_size = last - first;
 			    	_capacity = _size;
 			    	_container = _alloc.allocate(_capacity);
 			    	pointer ptr;
@@ -101,8 +102,9 @@ class ft::vector
 
                ~vector()
 		         {
-		         	this->clear();
-		         	_alloc.deallocate(_container, _capacity);
+		         	 this->clear();
+		         	 _alloc.deallocate(_container, _capacity);
+					
 		         };
                
 
@@ -203,6 +205,49 @@ class ft::vector
            		}
 
 				//Element access
+
+				reference operator[] (size_type n)
+				{
+					return (ptr[n]);
+				}
+				const_reference operator[] (size_type n) const
+				{
+					return (ptr[n]);
+				}
+
+				 reference at(size_type n)
+       			{
+       			    if (n >= _size)
+       			        throw std::out_of_range("vector");
+       			    return (ptr[n]);
+       			}
+
+       			const_reference at(size_type _n) const
+       			{
+       			    if (_n >= _size)
+       			        throw std::out_of_range("vector");
+       			    return (ptr[_n]);
+       			}
+
+				reference front()
+      			{
+      			    return (ptr[0]);
+      			}
+      			const_reference front() const
+      			{
+      			    return (ptr[0]);
+      			}
+
+      			reference back()
+      			{
+      			    return (ptr[_size - 1]);
+      			}
+
+      			const_reference back() const
+      			{
+      			    return (ptr[_size - 1]);
+      			}
+ 
 
 
       
