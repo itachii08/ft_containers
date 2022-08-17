@@ -75,7 +75,7 @@ int main5()
   for (int i=0; i<10; i++) myints.push_back(i);
   std::cout << "1. size: " << myints.size() << '\n';
 
-  myints.insert (myints.end(),10,100);
+  myints.insert (myints.end(), myints.begin() + 10, myints.begin() + 100);
   std::cout << "2. size: " << myints.size() << '\n';
 
   myints.pop_back();
@@ -98,7 +98,7 @@ int main6()
   return 0;
 }
 
-int main ()
+int main7 ()
 {
   ft::vector<int> myvector;
 
@@ -118,7 +118,7 @@ int main ()
   return 0;
 }
 
-int main ()
+int main8 ()
 {
   ft::vector<int> myvector;
   int sum (0);
@@ -137,7 +137,7 @@ int main ()
   return 0;
 }
 
-int main ()
+int main9 ()
 {
   std::vector<int>::size_type sz;
 
@@ -167,7 +167,7 @@ int main ()
   return 0;
 }
 
-int main ()
+int main10 ()
 {
   ft::vector<int> myvector (10);   // 10 zero-initialized elements
 
@@ -193,7 +193,7 @@ std::cout << "\n===============vector::at=======================\n";
   return 0;
 }
 
-int main ()
+int main11 ()
 {
   ft::vector<int> myvector (10);   // 10 zero-initialized ints
 
@@ -210,7 +210,7 @@ int main ()
   return 0;
 }
 
-int main ()
+int main12 ()
 {
   ft::vector<int> myvector;
 
@@ -227,7 +227,7 @@ int main ()
   return 0;
 }
 
-int main ()
+int main13 ()
 {
   ft::vector<int> myvector;
 
@@ -253,6 +253,17 @@ int main()
   main1();
   main2();
   main3();
+  main4();
+  //main5();
+  main6();
+  main7();
+  main8();
+  main9();
+  main10();
+  main11();
+  main12();
+  main13();
+ 
   // system("leaks a.out");
   return 0;
 }
