@@ -158,7 +158,8 @@ int main9 ()
   std::cout << "making bar grow:\n";
   for (int i=0; i<100; ++i) {
     bar.push_back(i);
-    if (sz!=bar.capacity()) {
+    if (sz!=bar.capacity()) 
+    {
       sz = bar.capacity();
       std::cout << "capacity changed: " << sz << '\n';
     }
@@ -188,8 +189,8 @@ int main10 ()
   std::cout << "myvector contains:";
   for (unsigned i=0; i<sz; i++)
     std::cout << ' ' << myvector[i];
-  std::cout << '\n';
-std::cout << "\n===============vector::at=======================\n";
+    std::cout << '\n';
+    std::cout << "\n===============vector::at=======================\n";
   return 0;
 }
 

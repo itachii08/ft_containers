@@ -1,17 +1,21 @@
 #pragma once
 #include "iterator_traits.hpp"
+#include "vector.hpp"
 #include <type_traits>
+#include <vector>
 
 template <typename T>
 class Vector_iterator
 {
     public:
-    typedef typename ft::iterator_traits<T*>::difference_type   difference_type;
-    typedef typename ft::iterator_traits<T*>::value_type        value_type;
-    typedef typename ft::iterator_traits<T*>::pointer           pointer;
-    typedef typename ft::iterator_traits<T*>::reference         reference;
-    typedef typename ft::iterator_traits<T*>::iterator_category iterator_category;
-    
+        typedef T iterator_type;
+        typedef typename ft::iterator_traits<T*>::difference_type   difference_type;
+        typedef typename ft::iterator_traits<T*>::value_type        value_type;
+        typedef typename ft::iterator_traits<T*>::pointer           pointer;
+        typedef typename ft::iterator_traits<T*>::reference         reference;
+        typedef typename ft::iterator_traits<T*>::iterator_category iterator_category;
+        typedef Vector_iterator<const T>						const_iterator;	
+
     private:
         pointer p;
     public:
@@ -25,10 +29,21 @@ class Vector_iterator
 
         }
 
-        Vector_iterator(Vector_iterator const & src)
+        pointer base()
         {
-            *this = src;
+            return (p);
         }
+
+        template <class Iter>
+        Vector_iterator (const Vector_iterator<Iter>& rev_it) //copy
+        {
+           this->p = rev_it.base();
+        }
+
+        // Vector_iterator(Vector_iterator const & src)
+        // {
+        //     *this = src;
+        // }
 
         Vector_iterator &operator=(Vector_iterator const & src)
         {
@@ -46,6 +61,10 @@ class Vector_iterator
             return p;
         }
 
+        operator const_iterator() 
+        {
+            return (const_iterator(p));
+        }
         bool operator== (Vector_iterator const & lhs) const
         {
             return (this->p == lhs.p);
@@ -159,10 +178,8 @@ class Vector_iterator
         friend bool operator<(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
         template <class _Iter1>
         friend bool operator==(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
-        template <class _Iter>
-        friend typename Vector_iterator<T>::difference_type operator- (const Vector_iterator<_Iter>& lhs, const Vector_iterator<_Iter>& rhs);
-        template <class _Iter>
-        friend Vector_iterator <T> operator+ (typename Vector_iterator<_Iter>::difference_type n, const Vector_iterator<_Iter>& it);
+       
+        
         
 
 };
@@ -204,13 +221,13 @@ bool operator==(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1
 }
 
 template <class _Iter>
-Vector_iterator <_Iter> operator+ (typename Vector_iterator<_Iter>::difference_type n, const Vector_iterator<_Iter>& it)
+Vector_iterator <_Iter> operator+(const typename Vector_iterator<_Iter>::difference_type n, const Vector_iterator<_Iter>& it)
 {
     return (n + it);   
 }
 
 template <class _Iter>
-typename Vector_iterator<_Iter>::difference_type operator- (const Vector_iterator<_Iter>& lhs, const Vector_iterator<_Iter>& rhs)
+typename Vector_iterator<_Iter>::difference_type operator-(const Vector_iterator<_Iter>& lhs, const Vector_iterator<_Iter>& rhs)
  {
     return (rhs - lhs);
  }

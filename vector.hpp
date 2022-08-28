@@ -304,7 +304,7 @@ class ft::vector
         		            typename enable_if<!is_integral<InputIterator>::value>::type *f = NULL)
         		{
         		    (void)f;
-        		    size_type n = last - first;
+        		    size_type n = std::distance(first, last);
         		    if (n > _capacity)
         		    {
         		        _alloc.deallocate(_container, _capacity);
@@ -326,7 +326,7 @@ class ft::vector
 
         		iterator erase(iterator first, iterator last)
         		{
-        		    size_type n = last - first;
+        		    size_type n = std::distance(first, last);
         		    for (size_type i = first - _container; i < _size - n; ++i)
         		        _alloc.construct(&_container[i] , _container[i + n]);
         		    _size -= n;
