@@ -166,58 +166,42 @@ class Vector_iterator
 		    return (p[n]);
 	    }
 
-        template <class _Iter1>
-        friend bool operator!=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
-        template <class _Iter1>
-        friend bool operator>(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y) ;
-        template <class _Iter1>
-        friend bool operator>=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
-        template <class _Iter1>
-        friend bool operator<=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
-        template <class _Iter1>
-        friend bool operator<(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
-        template <class _Iter1>
-        friend bool operator==(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y);
-       
-        
-        
-
 };
 
 template <class _Iter1>
 bool operator!=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y) 
 {
-    return !(__x.p == __y.p);
+    return !(__x.base() == __y.base());
 }
 
 template <class _Iter1>
 bool operator>(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y) 
 {
-    return __y.p > __x.p;
+    return __y.base() > __x.base();
 }
 
 template <class _Iter1>
 bool operator<(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y) 
 {
-    return __y.p < __x.p;
+    return __y.base() < __x.base();
 }
 
 template <class _Iter1>
 bool operator>=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y)
 {
-    return !(__x.p < __y.p);
+    return !(__x.base() < __y.base());
 }
 
 template <class _Iter1>
 bool operator<=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y) 
 {
-    return !(__y.p < __x.p);
+    return !(__y.base() < __x.base());
 }
 
 template <class _Iter1>
-bool operator==(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y)
+bool operator==(const Vector_iterator<_Iter1>& x, const Vector_iterator<_Iter1>& y)
 {
-    return __x.p == __y.p;
+    return (x.base() == y.base());
 }
 
 template <class _Iter>
