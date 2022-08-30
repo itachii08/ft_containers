@@ -171,7 +171,7 @@ class Vector_iterator
 template <class _Iter1>
 bool operator!=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1>& __y) 
 {
-    return !(__x.base() == __y.base());
+    return !(__x == __y);
 }
 
 template <class _Iter1>
@@ -201,13 +201,13 @@ bool operator<=(const Vector_iterator<_Iter1>& __x, const Vector_iterator<_Iter1
 template <class _Iter1>
 bool operator==(const Vector_iterator<_Iter1>& x, const Vector_iterator<_Iter1>& y)
 {
-    return (x.base() == y.base());
+    return x.base() == y.base();
 }
 
 template <class _Iter>
 Vector_iterator <_Iter> operator+(const typename Vector_iterator<_Iter>::difference_type n, const Vector_iterator<_Iter>& it)
 {
-    return (n + it);   
+    return (it + n);   
 }
 
 template <class _Iter>

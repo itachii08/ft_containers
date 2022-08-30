@@ -7,6 +7,8 @@
 #include "reverse_iterator.hpp"
 #include "is_integral.hpp"
 #include "enable_if.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 #include <iterator>
 
 namespace ft
@@ -48,27 +50,18 @@ class ft::vector
                  const allocator_type& alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(n), _capacity(n)
 		         {
 		         	_container = _alloc.allocate(n);
-		         	for (unsigned long i = 0; i < n; i++)
+		         	for (size_type i = 0; i < n; i++)
 		         	{
+						//std::cout << val << std::endl;
 		         		_container[i] = val;
 		         	}
 		         }
 
-               template <class InputIterator> 
-               vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-               typename enable_if<!is_integral<InputIterator>::value>::type* = NULL) : _alloc(alloc)
-               {
-                  	_size = last - first;
-			    	_capacity = _size;
-			    	_container = _alloc.allocate(_capacity);
-			    	pointer ptr;
-			    	ptr = _container;
-			    	int i = 0;
-			    	for (InputIterator it = first; it != last; it++)
-			    	{
-			    		_container[i++] = *it;
-			    	}
-               }
+               template <class InputIterator>
+				vector (InputIterator first, InputIterator last): _capacity(0), _size(0), _container(NULL) 
+				{
+					assign(first, last);
+				}
 
                vector (const vector& x)
                {
@@ -81,6 +74,7 @@ class ft::vector
 		         	_size = x._size;
 		         	_capacity = x._capacity;
 		         	_container = _alloc.allocate(_capacity);
+					
 		         	for (size_t i = 0; i < _size; i++)
 		         	{
 		         		_container[i] = x._container[i];
@@ -428,3 +422,46 @@ class ft::vector
         		}
 }; 
 
+template <class Tp, class Alloc>
+	bool operator== (const ft::vector<Tp,Alloc>& lhs, const ft::vector<Tp,Alloc>& rhs)
+	{
+		return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+template <class Tp, class Alloc>
+	bool operator!= (const ft::vector<Tp,Alloc>& lhs, const ft::vector<Tp,Alloc>& rhs)
+	{
+		return !(lhs == rhs);
+	}
+template <class Tp, class Alloc>
+	bool operator<  (const ft::vector<Tp,Alloc>& lhs, const ft::vector<Tp,Alloc>& rhs)
+	{
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(),
+											rhs.begin(), rhs.end());
+	}
+
+template <class Tp, class Alloc>
+	bool operator<= (const ft::vector<Tp,Alloc>& lhs, const ft::vector<Tp,Alloc>& rhs)
+	{
+		return !(rhs < lhs);
+	}
+
+	template <class Tp, class Alloc>
+	bool operator>  (const ft::vector<Tp,Alloc>& lhs, const ft::vector<Tp,Alloc>& rhs)
+	{
+		return rhs < lhs;
+	}
+
+template <class Tp, class Alloc>
+	bool operator>= (const ft::vector<Tp,Alloc>& lhs, const ft::vector<Tp,Alloc>& rhs)
+	{
+		
+		return !(lhs < rhs); 
+
+	}
+
+template <class Tp, class Alloc>
+	void swap (ft::vector<Tp,Alloc>& x, ft::vector<Tp,Alloc>& y)
+	{
+		x.swap(y);
+	}
