@@ -52,8 +52,7 @@ class ft::vector
 		         	_container = _alloc.allocate(n);
 		         	for (size_type i = 0; i < n; i++)
 		         	{
-						//std::cout << val << std::endl;
-		         		_container[i] = val;
+		         		_alloc.construct(_container + i, val);
 		         	}
 		         }
 
@@ -70,6 +69,7 @@ class ft::vector
 
                vector &operator=(const vector &x)
 		         {
+					
 		         	_alloc = x._alloc;
 		         	_size = x._size;
 		         	_capacity = x._capacity;
@@ -77,7 +77,7 @@ class ft::vector
 					
 		         	for (size_t i = 0; i < _size; i++)
 		         	{
-		         		_container[i] = x._container[i];
+						_alloc.construct(_container + i,  x._container[i]);
 		         	}
 		         	return (*this);
 		         }
