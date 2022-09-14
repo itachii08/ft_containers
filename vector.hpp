@@ -41,12 +41,12 @@ private:
 	pointer _container;
 
 public:
-	explicit vector(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(0), _capacity(0)
+	explicit vector(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _size(0), _capacity(0), _container(NULL)
 	{
 	}
 
 	explicit vector(size_type n, const value_type &val = value_type(),
-					const allocator_type &alloc = allocator_type()) : _alloc(alloc), _container(NULL), _size(n), _capacity(n)
+					const allocator_type &alloc = allocator_type()) : _alloc(alloc), _size(n), _capacity(n), _container(NULL)
 	{
 		_container = _alloc.allocate(n);
 		for (size_type i = 0; i < n; i++)
@@ -56,7 +56,7 @@ public:
 	}
 
 	template <class InputIterator>
-	vector(InputIterator first, InputIterator last) : _capacity(0), _size(0), _container(NULL)
+	vector(InputIterator first, InputIterator last) : _size(0), _capacity(0), _container(NULL)
 	{
 		assign(first, last);
 	}
