@@ -39,11 +39,6 @@ public:
         this->p = rev_it.base();
     }
 
-    // Vector_iterator(Vector_iterator const & src)
-    // {
-    //     *this = src;
-    // }
-
     Vector_iterator &operator=(Vector_iterator const &src)
     {
         this->p = src.p;
