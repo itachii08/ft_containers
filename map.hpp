@@ -88,10 +88,12 @@ private:
     typedef K                   key_type;
     typedef node<value_type>    node_type;
     typedef std::allocator<node_type> alloc;
+    typedef std::allocator<value_type> alloc_pair;
     typedef Compare             key_compare;
     typedef size_t              size_type;
 
     alloc               allocat;
+    alloc_pair          allocat_pair;
     key_compare      comp;
 public:
     node_type         * top;
@@ -102,11 +104,126 @@ public:
     {
         top = NULL;
         last = allocat.allocate(1);
+
+        allocat = alloc();
+        allocat_pair = alloc_pair();
     }
 
-    node_type * min_left()
+    int erase( const key_type & k )
     {
-        node_type * tmp = top;
+        return erase_recur(top, k);
+    }
+
+    int erase_recur(node_type *& c, const key_type & k)
+    {
+        int ret = 0;
+
+        if (c) 
+        {
+            if ( comp(k, c->data->first) ) // true
+            {
+                erase_recur(c->left, k);
+            }
+
+            else if ( comp(c->data->first, k) )
+            {
+                erase_recur(c->right, k);
+            }
+
+            else
+            {
+
+                if ( c->left == NULL && c->right == NULL )
+                {
+                    allocat.destroy(c);
+                    allocat.deallocate(c, 1);
+                    c = NULL;
+
+                    return 1;
+                }
+
+                else if ( c->left == NULL )
+                {
+                    node_type * tmp = c->right;
+                    node_type * parent_tmp = c->parent;
+
+                    allocat.destroy(c);
+                    allocat.deallocate(c, 1);
+                    c = NULL;
+
+                    c = tmp;
+                    tmp->parent = parent_tmp;
+                    ret = 1;
+                }
+
+                else if ( c->right == NULL )
+                {
+                    node_type * tmp = c->left;
+                    node_type * parent_tmp = c->parent;
+
+                    allocat.destroy(c);
+                    allocat.deallocate(c, 1);
+                    c = NULL;
+
+                    c = tmp;
+                    tmp->parent = parent_tmp;
+                    ret = 1;
+                }
+                else
+                {
+                    node_type * tmp = min_left(c->right);
+
+                    allocat_pair.destroy(c->data);
+                    allocat_pair.deallocate(c->data, 1);
+
+                    c->data = allocat_pair.allocate(1);
+                    allocat_pair.construct(c->data, ft::make_pair(tmp->data->first, tmp->data->second));
+
+                    ret = erase_recur(c->right, tmp->data->first);
+                }
+            }
+
+
+            c->height = 1 + std::max(nodeHeight(c->left), nodeHeight(c->right));
+            int balance = nodeBalance(c);
+
+
+            if (balance > 1)
+            {
+                int leftBal = nodeBalance(c->left);
+                if (leftBal > 0)
+                {
+                    c = rotationRight(c);
+                }
+
+                else if (leftBal < 0)
+                {
+                    c->left = rotationLeft(c->left);
+                    c = rotationRight(c);
+                }
+            }
+
+            else if (balance < -1)
+            {
+                int rightBal = nodeBalance(c->right);
+                if (rightBal < 0)
+                {
+                    c = rotationLeft(c);
+                }
+
+                else if (rightBal > 0)
+                {
+                    c->right = rotationRight(c->right);
+                    c = rotationLeft(c);
+                }
+            }
+        }
+        return ret;
+    }
+
+    node_type * min_left(node_type * t)
+    {
+        node_type * tmp = t;
         while (tmp && tmp->left)
         {
             tmp = tmp->left;
@@ -343,17 +460,22 @@ public:
     typedef node<value_type>                        node_type;
     typedef ft::map_iterator<value_type, node_type> iterator;
     typedef ft::map_iterator<const_value_type, node_type> const_iterator;
+    typedef size_t                                  size_type;
 
     avl<Key, T, Compare> avl_map;
+    size_type           size;
 public:
     map()
     {
+        size = 0;
     }
 
     // single element (1)
     pair<iterator,bool> insert (const value_type& val)
     {
         bool ret = avl_map.insert(val);
+        if (ret)
+            size++;
 
         return ft::pair<iterator, bool> ( iterator(avl_map.top, avl_map.find(avl_map.top, val.first), avl_map.last), ret );
         // return ft::make_pair( iterator(avl_map.find(avl_map.top, val.first), avl_map.last), ret ) ;
@@ -361,7 +483,9 @@ public:
     // with hint (2)
     iterator insert (iterator position, const value_type& val)
     {
-        avl_map.insert(val);
+        if (avl_map.insert(val))
+            size++;
+
         return iterator (avl_map.top, avl_map.find(avl_map.top, val.first), avl_map.last) ;
     }
     template <class InputIterator>
@@ -372,16 +496,35 @@ public:
             insert(*first);
             // avl_map.insert(*first);
             first++;
+            size++;
         }
+    }
+
+    void erase (iterator position)
+    {
+        int a = avl_map.erase( position->first );
+        if (a == 1)
+            size--;
+    }
+    size_type erase (const key_type& k)
+    {
+        int a = avl_map.erase( k );
+        if (a == 1)
+            size--;
+        return a;
+    }
+    void erase (iterator first, iterator last)
+    {
+
     }
 
           iterator begin()
           {
-            return iterator(avl_map.top, avl_map.min_left(), avl_map.last);
+            return iterator(avl_map.top, avl_map.min_left(avl_map.top), avl_map.last);
           }
     const_iterator begin() const
           {
-            return const_iterator(avl_map.top, avl_map.min_left(), avl_map.last);
+            return const_iterator(avl_map.top, avl_map.min_left(avl_map.top), avl_map.last);
           }
 
           iterator end()
@@ -459,13 +602,28 @@ int main()
 
     // std::map<int, int> m;
     // std::cout << m.end()->first << std::endl;
-        std::cout << mitb->first << std::endl;
+        // std::cout << mitb->first << std::endl;
 
-    while (mitb != mite)
-    {
-        mite--;
-        std::cout << mite->first << std::endl;
-    }
+    // while (mitb != mite)
+    // {
+    //     mite--;
+    //     std::cout << mite->first << std::endl;
+    // }
+
+    std::cout << std::endl;
+    a.erase(5);
+    std::cout << std::endl;
+
+    a.print();
+
+    // mite = a.end();
+    // while (mitb != mite)
+    // {
+    //     mite--;
+    //     std::cout << mite->first << std::endl;
+    // }
+
+
 
     // while (mitb != mite)
     // {
