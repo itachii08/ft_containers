@@ -59,13 +59,14 @@ public:
         return (this->p != lhs.p);
     }
 
-    reference operator*()
+    reference operator*() const
     {
         return *(this->p->data);
     }
 
-    pointer operator->()
+    pointer operator->() const
     {
+        return (this->p->data);
         return &(operator*());
     }
 
