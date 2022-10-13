@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <vector>
 #include <iostream>
 #include <stdexcept>
 #include "iterator.hpp"
@@ -13,7 +12,8 @@
 
 namespace ft
 {
-	template <class T, class Alloc = std::allocator<T> > class vector;
+	template <class T, class Alloc = std::allocator<T> >
+	class vector;
 }
 
 template <class T, class Alloc>
@@ -56,9 +56,29 @@ public:
 	}
 
 	template <class InputIterator>
-	vector(InputIterator first, InputIterator last) : _size(0), _capacity(0), _container(NULL)
+	vector(InputIterator first, InputIterator last,
+		   const allocator_type &alloc = allocator_type(),
+		   typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type *f = NULL)
 	{
-		assign(first, last);
+		f = NULL;
+		_alloc = alloc;
+		size_type n = 0;
+		size_type i = 0;
+		InputIterator tmp(first);
+		while (tmp != last)
+		{
+			tmp++;
+			n++;
+		}
+		_size = n;
+		_capacity = n;
+		_container = _alloc.allocate(n);
+		while (first != last)
+		{
+			_alloc.construct(_container + i, *(first));
+			i++;
+			first++;
+		}
 	}
 
 	vector(const vector &x)
@@ -68,10 +88,15 @@ public:
 
 	vector &operator=(const vector &x)
 	{
-
+		// if (_capacity)
+		// {
+		// 	clear();
+		// 	_alloc.deallocate(_container, _capacity); // check
+		// }
 		_alloc = x._alloc;
 		_size = x._size;
 		_capacity = x._capacity;
+
 		_container = _alloc.allocate(_capacity);
 
 		for (size_t i = 0; i < _size; i++)
@@ -152,15 +177,18 @@ public:
 		if (n < _capacity)
 			return;
 		else if (n > max_size())
+		{
 			throw std::length_error("error length");
-		pointer t = _container;
+			return;
+		}
+		pointer ptr = _container;
 		_container = _alloc.allocate(n);
 		for (size_t i = 0; i < _size; ++i)
 		{
-			_alloc.construct(&_container[i], t[i]);
-			_alloc.destroy(&t[i]);
+			_alloc.construct(&_container[i], ptr[i]);
+			_alloc.destroy(&ptr[i]);
 		}
-		_alloc.deallocate(t, _capacity);
+		_alloc.deallocate(ptr, _capacity);
 		_capacity = n;
 	}
 
@@ -191,8 +219,7 @@ public:
 	{
 		if (_size == 0)
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	// Element access
@@ -243,21 +270,21 @@ public:
 
 	void swap(vector &x)
 	{
-		pointer tmparr;
-		size_type tmpcapacity;
-		size_type tmpsize;
+		pointer tmp;
+		size_type tmpsiz;
+		size_type tmpcap;
 
-		tmparr = this->_container;
-		tmpcapacity = this->_capacity;
-		tmpsize = this->_size;
+		tmp = this->_container;
+		tmpsiz = this->_size;
+		tmpcap = this->_capacity;
 
 		this->_container = x._container;
-		this->_capacity = x._capacity;
 		this->_size = x._size;
+		this->_capacity = x._capacity;
 
-		x._container = tmparr;
-		x._capacity = tmpcapacity;
-		x._size = tmpsize;
+		x._container = tmp;
+		x._capacity = tmpcap;
+		x._size = tmpsiz;
 	}
 
 	void push_back(const value_type &val)
@@ -293,7 +320,7 @@ public:
 	void assign(InputIterator first, InputIterator last,
 				typename enable_if<!is_integral<InputIterator>::value>::type *f = NULL)
 	{
-		(void)f;
+		f = NULL;
 		size_type n = std::distance(first, last);
 		if (n > _capacity)
 		{
@@ -325,96 +352,86 @@ public:
 
 	iterator insert(iterator position, const value_type &val)
 	{
-		size_type i = 0;
-		size_type o = position - this->begin();
-		if (_size == 0)
-			push_back(val);
-		else
+		size_type p;
+		size_type len;
+
+		p = std::distance(this->begin(), position);
+
+		if (this->_size == this->_capacity)
 		{
-			if (_size + 1 > _capacity)
-				reserve(_capacity * 2);
-			while (_size - i + 1 > 0)
-			{
-				if (_size - i == o)
-				{
-					_alloc.construct(&_container[_size - i], val);
-					break;
-				}
-				else
-					_alloc.construct(&_container[_size - i], _container[_size - i - 1]);
-				i++;
-			}
-			_size++;
+			if (this->_capacity == 0)
+				len = 1;
+			else
+				len = this->_capacity * 2;
+			this->reserve(len);
 		}
-		return (_container + o);
+
+		for (size_type i = (this->_size); i > p; i--)
+		{
+			this->_alloc.construct(this->_container + i, *(this->_container + i - 1));
+		}
+
+		this->_alloc.construct(this->_container + p, val);
+
+		this->_size++;
+
+		return (iterator(this->_container + p));
 	}
 
 	void insert(iterator position, size_type n, const value_type &val)
 	{
-		size_type o = position - this->begin();
-		size_type i = 0;
-		size_type k = n;
-		if (_size + n > _capacity)
+		difference_type p = std::distance(this->begin(), position);
+		size_type len;
+		if (this->_size == this->_capacity)
 		{
-			if (_size + n < _size * 2)
-				reserve(!(_size) ? 1 : (_size * 2));
+			if (this->_capacity == 0)
+				len = n;
 			else
-				reserve(!(_size + n) ? 1 : (_size + n));
+				len = _capacity * 2;
+			if (len < _size + n)
+				len = _size + n;
+			this->reserve(len);
 		}
-		while (_size - i + n > 0)
-		{
-			if (_size - i == o)
-			{
-				while (k--)
-					_alloc.construct(&_container[_size - i + k], val);
-				break;
-			}
-			else
-				_alloc.construct(&_container[_size - i + n - 1], _container[_size - i - 1]);
-			i++;
-		}
+		for (difference_type i = _size - 1; i >= p; --i)
+			this->_alloc.construct(_container + i + n, *(_container + i));
+		for (size_t i = 0; i < n; i++)
+			this->_alloc.construct(_container + p + i, val);
 		_size += n;
 	}
 
 	template <class InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last)
 	{
-		size_type n = std::distance(first, last);
-		size_type i = 0;
-		size_type pos = position - begin();
-		if (_capacity < _size + n && n <= _size)
-			reserve(_capacity * 2);
-		else if (_size + n > _capacity)
-			reserve(_capacity + n);
-		while (_size + n - i > 0)
-		{
-			if (_size - i == pos)
-			{
-				pos = n;
-				try
-				{
-					while (pos--)
-						_alloc.construct(&_container[_size - i + pos], *(--last));
-				}
-				catch (...)
-				{
-					for (size_type i = size(); i != 0; i--)
-					{
+		size_type len;
+		size_type dis;
+		difference_type pos;
 
-						std::cout << "i =  " << i << std::endl;
-						_alloc.destroy(&_container[i - 1]);
-					}
-					_capacity = 0;
-					throw 3;
-				}
-				break;
-			}
+		pos = std::distance(begin(), position);
+		dis = (std::distance(first, last));
+
+		if (this->_size == _capacity)
+		{
+			if (this->_capacity == 0)
+				len = dis;
 			else
-				_alloc.construct(&_container[_size - i + n - 1], _container[_size - i - 1]);
-			i++;
+				len = this->_capacity * 2;
+			if (len < (this->_size + dis))
+				len = (this->_size + dis);
+			this->reserve(len);
 		}
-		_size += n;
+
+		for (difference_type i = (this->_size - 1); i >= pos; --i)
+		{
+			this->_alloc.construct(this->_container + i + dis, *(this->_container + i));
+		}
+		for (size_t i = 0; i < dis; i++)
+		{
+			this->_alloc.construct(this->_container + pos + i, *(first + i));
+		}
+
+		this->_size += dis;
 	}
+
 	allocator_type get_allocator() const
 	{
 		return (_alloc);

@@ -1,9 +1,99 @@
 #include "vector.hpp"
 #include "iterator.hpp"
+#include "map.hpp"
+#include "pair.hpp"
+#include "iterator_map.hpp"
+#include "stack.hpp"
 
+int main_map()
+{
+  std::cout << "********************* MAP ********************\n";
+    // avl< ft::pair<int, int>, std::less<int> > a;
+
+    ft::map<int, int> a;
+
+    a.insert(ft::pair<int, int>(7, 7));
+    a.insert(ft::pair<int, int>(2, 2));
+    a.insert(ft::pair<int, int>(0, 0));
+    a.insert(ft::pair<int, int>(-1, -1));
+    a.insert(ft::pair<int, int>(1, 1));
+    a.insert(ft::pair<int, int>(6, 6));
+    a.insert(ft::pair<int, int>(8, 8));
+    a.insert(ft::pair<int, int>(10, 10));
+    a.insert(ft::pair<int, int>(4, 4));
+    a.insert(ft::pair<int, int>(5, 5));
+    a.insert(ft::pair<int, int>(3, 3));
+    a.insert(ft::pair<int, int>(9, 9));
+    ft::pair<ft::map<int, int>::iterator, bool> pr = a.insert(ft::pair<int, int>(9, 9));
+    a.print();
+
+    ft::map<int, int>::const_iterator mitb = a.begin();
+    ft::map<int, int>::const_iterator mite = a.end();
+
+    // std::map<int, int>  ;
+    // std::cout << m.end()->first << std::endl;
+    // std::cout << mitb->first << std::endl;
+
+    // while (mitb != mite)
+    // {
+    //     mite--;
+    //     std::cout << mite->first << std::endl;
+    // }
+
+    std::cout << std::endl;
+    a.erase(5);
+    std::cout << std::endl;
+
+    a.print();
+
+    // mite = a.end();
+    // while (mitb != mite)
+    // {
+    //     mite--;
+    //     std::cout << mite->first << std::endl;
+    // }
+
+    // while (mitb != mite)
+    // {
+
+    //     std::cout << mitb->first << std::endl;
+    //     mitb++;
+    // }
+    // std::cout << mitb->first << std::endl;
+
+    // std::cout << pr.second << std::endl;
+    // std::cout << mit->first << std::endl;
+
+    // std::cout<< a.top->left->left->left->parent->parent->parent->data->first << std::endl;
+    // std::cout << a.top->left->left->parent->parent->data->first << std::endl;
+    std::cout << "********************* VECTOR ********************\n";
+    return 0;
+}
+int main_swap()
+{
+  ft::vector<int> v1;
+
+  for (int i = 1; i < 6; i++)
+    v1.push_back(i);
+
+  ft::vector<int> v2;
+
+  for (int i = 6; i < 10; i++)
+    v2.push_back(i);
+
+  ft::vector<int>::iterator it = v1.begin();
+
+  std::cout << "it before swap => " << *it << std::endl;
+
+  v1.swap(v2);
+  it = v1.begin();
+  std::cout << "it after swap => " << *it << std::endl;
+  return 0;
+}
 
 int main1 ()
 {
+  
   std::cout << "\n=========constructing vectors===================\n";
     // constructors used in the same order as described above:
     ft::vector<int> first;                                // empty vector of ints
@@ -110,7 +200,7 @@ int main7 ()
   myvector.resize(12);
 
   std::cout << "myvector contains:";
-  for (int i=0;i<myvector.size();i++)
+  for (unsigned long i=0;i<myvector.size();i++)
     std::cout << ' ' << myvector[i];
   std::cout << '\n';
   std::cout << "\n===============vector emty=======================\n";
@@ -247,15 +337,56 @@ int main13 ()
   return 0;
 }
 
+int main_stack1 ()
+{
+  std::cout << "===========> Constract============== \n";
+  ft::vector<int> mydeque (3,100);          // deque with 3 elements
+  ft::vector<int> myvector (2,200);        // vector with 2 elements
+
+  ft::stack<int> first;                    // empty stack
+  ft::stack<int> second (mydeque);         // stack initialized to copy of deque
+
+  ft::stack<int,ft::vector<int> > third;  // empty stack using vector
+  ft::stack<int,ft::vector<int> > fourth (myvector);
+
+  std::cout << "size of first: " << first.size() << '\n';
+  std::cout << "size of second: " << second.size() << '\n';
+  std::cout << "size of third: " << third.size() << '\n';
+  std::cout << "size of fourth: " << fourth.size() << '\n';
+
+  return 0;
+}
+
+int main_stack2 ()
+{
+  std::cout << "===========> emty and top pop ================== \n";
+  ft::stack<int> mystack;
+  int sum (0);
+
+  for (int i=1;i<=10;i++) mystack.push(i);
+
+  while (!mystack.empty())
+  {
+     sum += mystack.top();
+     mystack.pop();
+  }
+
+  std::cout << "total: " << sum << '\n';
+
+  return 0;
+}
+
 
 
 int main()
 {
+  main_swap();
+  main_map();
   main1();
   main2();
   main3();
   main4();
-  //main5();
+  main5();
   main6();
   main7();
   main8();
@@ -264,7 +395,11 @@ int main()
   main11();
   main12();
   main13();
+  main_stack1();
+  main_stack2();
+
+  
  
-  // system("leaks a.out");
+  //system("leaks a.out");
   return 0;
 }
